@@ -72,11 +72,14 @@ extensions.configure<JMHPluginExtension>("jmh") {
 //    includeTests = false
 }
 
-tasks.named<Jar>("jmhJar") {
+val jvmImplementationConfiguration = configurations["jvmImplementation"]
+
+tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("jmhJar") {
     archiveBaseName by "benchmarks"
     archiveClassifier by null
     archiveVersion by null
     destinationDirectory.file("$rootDir")
+    configurations.add(jvmImplementationConfiguration)
 }
 
 dependencies {
@@ -86,7 +89,7 @@ dependencies {
     compile("com.github.akarnokd:rxjava2-extensions:0.20.8")
 
     compile("com.typesafe.akka:akka-actor_2.12:2.5.0")
-    compile(project(":kotlinx-coroutines-core"))
+    jvmImplementation(project(":kotlinx-coroutines-core"))
 
     // add jmh dependency on main
     "jmhImplementation"(sourceSets.main.get().runtimeClasspath)
